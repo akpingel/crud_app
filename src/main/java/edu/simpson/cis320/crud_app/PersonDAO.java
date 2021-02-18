@@ -39,7 +39,7 @@ public class PersonDAO {
             // This is a string that is our SQL query.
             // Update for all our fields
 
-            String sql = "select id, first, last, phone, birthday from person";
+            String sql = "select id, first, last, email, phone, birthday from person order by last, first";
 
 
             // If you had parameters, it would look something like
@@ -66,6 +66,7 @@ public class PersonDAO {
                 person.setId(rs.getInt("id"));
                 person.setFirst(rs.getString("first"));
                 person.setLast(rs.getString("last"));
+                person.setEmail(rs.getString("email"));
                 person.setPhone(rs.getString("phone"));
                 person.setBirthday(rs.getString("birthday"));
 
