@@ -100,9 +100,7 @@ function saveChanges(){
     console.log("Birthday: " + birthday);
 
     // Create the regular expression
-    let reg = /^[A-Za-z\u00C0-\u00FF'-(\s)]{1,10}$/;
-    //let reg = /^(\s)*[A-Za-z]+((\s)?((\'|\-|\.)?([A-Za-z])+))*(\s)*$/;
-    //let reg = /^[a-zA-Z\u00C0-\u00FF]*$/;
+    let reg = /^[A-Za-z-.'\u00C0-\u00FF(\s)]{1,10}$/;
 
     if (reg.test(firstName)) {
         $('#firstName').removeClass("is-invalid");
