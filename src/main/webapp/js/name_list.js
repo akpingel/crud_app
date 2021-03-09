@@ -99,6 +99,7 @@ function saveChanges(){
     let birthday = $('#birthday').val();
     console.log("Birthday: " + birthday);
 
+    let isValid = true;
     // Create the regular expression
     let reg = /^[A-Za-z-.'\u00C0-\u00FF(\s)]{1,10}$/;
 
@@ -108,6 +109,7 @@ function saveChanges(){
     } else {
         $('#firstName').removeClass("is-valid");
         $('#firstName').addClass("is-invalid");
+        isValid = false;
     }
 
     if (reg.test(lastName)) {
@@ -116,6 +118,7 @@ function saveChanges(){
     } else {
         $('#lastName').removeClass("is-valid");
         $('#lastName').addClass("is-invalid");
+        isValid = false;
     }
 
     let regEmail = /^[a-zA-Z0-9-.]{1,15}@[A-Za-z-.]{1,15}.[A-Za-z]{3}$/;
@@ -125,6 +128,7 @@ function saveChanges(){
     } else {
         $('#email').removeClass("is-valid");
         $('#email').addClass("is-invalid");
+        isValid = false;
     }
 
     let regPhone = /^\(?[1-9][0-9]{2}\)?-?[0-9]{3}-?[0-9]{4}$/;
@@ -134,6 +138,7 @@ function saveChanges(){
     } else {
         $('#phone').removeClass("is-valid");
         $('#phone').addClass("is-invalid");
+        isValid = false;
     }
 
     let regBirthday = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/;
@@ -143,10 +148,43 @@ function saveChanges(){
     } else {
         $('#birthday').removeClass("is-valid");
         $('#birthday').addClass("is-invalid");
+        isValid = false;
     }
 
+    console.log("Valid? " + isValid);
+
+    let url = "api/name_list_get";
+
+    // Create a JSON object with field names and field values
+    let dataToServer = { firstnameField : firstName,
+        lastnameField : lastName,
+        emailField : email,
+        phoneField : phone.replaceAll("-", ""),
+        birthdayField : birthday};
+
+    if (isValid)
+    {
+        // Send the request to the servlet
+        $.get(url, dataToServer, function (dataFromServer) {
+            // This happens when we are done
+            console.log("Finished calling servlet.");
+            console.log(dataToServer);
+        });
+        // $.ajax({
+        //     type: 'POST',
+        //     url: url,
+        //     data: JSON.stringify(dataToServer),
+        //     success: function(dataFromServer) {
+        //         console.log(dataFromServer);
+        //     },
+        //     contentType: "application/json",
+        //     dataType: 'text' // Could be JSON or whatever too
+        // });
+    }
+    console.log("end of function.");
 
 }
 
 let saveChangesButton = $('#saveChanges');
 saveChangesButton.on("click", saveChanges)
+
