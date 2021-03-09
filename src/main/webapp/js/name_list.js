@@ -71,6 +71,16 @@ function showDialogAdd() {
     $('#email').val("");
     $('#phone').val("");
     $('#birthday').val("");
+    $('#firstName').removeClass("is-invalid");
+    $('#firstName').removeClass("is-valid");
+    $('#lastName').removeClass("is-invalid");
+    $('#lastName').removeClass("is-valid");
+    $('#email').removeClass("is-invalid");
+    $('#email').removeClass("is-valid");
+    $('#phone').removeClass("is-invalid");
+    $('#phone').removeClass("is-valid");
+    $('#birthday').removeClass("is-invalid");
+    $('#birthday').removeClass("is-valid");
 
     // Show the hidden dialog
     $('#myModal').modal('show');
@@ -153,7 +163,7 @@ function saveChanges(){
 
     console.log("Valid? " + isValid);
 
-    let url = "api/name_list_get";
+    let url = "api/name_list_edit";
 
     // Create a JSON object with field names and field values
     let dataToServer = { firstnameField : firstName,
@@ -165,21 +175,21 @@ function saveChanges(){
     if (isValid)
     {
         // Send the request to the servlet
-        $.get(url, dataToServer, function (dataFromServer) {
-            // This happens when we are done
-            console.log("Finished calling servlet.");
-            console.log(dataToServer);
-        });
-        // $.ajax({
-        //     type: 'POST',
-        //     url: url,
-        //     data: JSON.stringify(dataToServer),
-        //     success: function(dataFromServer) {
-        //         console.log(dataFromServer);
-        //     },
-        //     contentType: "application/json",
-        //     dataType: 'text' // Could be JSON or whatever too
+        // $.get(url, dataToServer, function (dataFromServer) {
+        //     // This happens when we are done
+        //     console.log("Finished calling servlet.");
+        //     console.log(dataToServer);
         // });
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: JSON.stringify(dataToServer),
+            success: function(dataFromServer) {
+                console.log(dataFromServer);
+            },
+            contentType: "application/json",
+            dataType: 'text' // Could be JSON or whatever too
+        });
     }
     console.log("end of function.");
 
