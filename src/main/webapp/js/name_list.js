@@ -166,11 +166,11 @@ function saveChanges(){
     let url = "api/name_list_edit";
 
     // Create a JSON object with field names and field values
-    let dataToServer = { firstnameField : firstName,
-        lastnameField : lastName,
-        emailField : email,
-        phoneField : phone.replaceAll("-", ""),
-        birthdayField : birthday};
+    let dataToServer = { first : firstName,
+        last : lastName,
+        email : email,
+        phone : phone.replaceAll("-", ""),
+        birthday : birthday};
 
     if (isValid)
     {

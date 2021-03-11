@@ -94,4 +94,53 @@ public class PersonDAO {
         return list;
     }
 
+    public static void addPerson(Person newPerson){
+        log.log(Level.FINE, "Get people");
+
+        // Declare our variables
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        //int rs;
+
+        // Databases are unreliable. Use some exception handling
+        try {
+            // Get our database connection
+            conn = DBHelper.getConnection();
+
+            // This is a string that is our SQL query.
+            // Update for all our fields
+
+            log.log(Level.INFO, "Get first " + newPerson.getFirst());
+
+            String sql = "INSERT INTO person (first, last, email, phone, birthday) VALUES (?, ?, ?, ?, ?);";
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, newPerson.getFirst());
+            stmt.setString(2, newPerson.getLast());
+            stmt.setString(3, newPerson.getEmail());
+            stmt.setString(4, newPerson.getPhone());
+            stmt.setString(5, newPerson.getBirthday());
+
+
+            stmt = conn.prepareStatement(sql);
+
+            stmt.executeUpdate();
+
+
+        } catch (SQLException se) {
+            log.log(Level.SEVERE, "SQL Error", se );
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Error", e );
+        } finally {
+            // Ok, close our result set, statement, and connection
+//            try { if (rs != null) rs.close(); }
+//            catch (Exception e) { log.log(Level.SEVERE, "Error", e ); }
+
+            try { if(stmt != null) stmt.close(); }
+            catch (Exception e) { log.log(Level.SEVERE, "Error", e ); }
+
+            try { if(conn != null) conn.close(); }
+            catch (Exception e) { log.log(Level.SEVERE, "Error", e ); }
+        }
+    }
+
 }
