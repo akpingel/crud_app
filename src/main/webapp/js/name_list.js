@@ -174,12 +174,6 @@ function saveChanges(){
 
     if (isValid)
     {
-        // Send the request to the servlet
-        // $.get(url, dataToServer, function (dataFromServer) {
-        //     // This happens when we are done
-        //     console.log("Finished calling servlet.");
-        //     console.log(dataToServer);
-        // });
         $.ajax({
             type: 'POST',
             url: url,
@@ -196,5 +190,4 @@ function saveChanges(){
 }
 
 let saveChangesButton = $('#saveChanges');
-saveChangesButton.on("click", saveChanges)
-
+saveChangesButton.on("click", saveChanges);

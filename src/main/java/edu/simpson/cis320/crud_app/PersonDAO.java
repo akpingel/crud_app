@@ -120,11 +120,7 @@ public class PersonDAO {
             stmt.setString(4, newPerson.getPhone());
             stmt.setString(5, newPerson.getBirthday());
 
-
-            stmt = conn.prepareStatement(sql);
-
             stmt.executeUpdate();
-
 
         } catch (SQLException se) {
             log.log(Level.SEVERE, "SQL Error", se );
