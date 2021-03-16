@@ -180,9 +180,12 @@ function saveChanges(){
             data: JSON.stringify(dataToServer),
             success: function(dataFromServer) {
                 console.log(dataFromServer);
+                updateTable();
             },
             contentType: "application/json",
             dataType: 'text' // Could be JSON or whatever too
+
+
         });
     }
     console.log("end of function.");
