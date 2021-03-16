@@ -1,7 +1,5 @@
 package edu.simpson.cis320.crud_app;
 
-import sun.jvm.hotspot.oops.OopUtilities;
-
 import javax.imageio.ImageIO;
 import javax.servlet.ServletContext;
 import javax.servlet.annotation.WebServlet;
