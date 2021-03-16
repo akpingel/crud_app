@@ -32,6 +32,7 @@ function updateTable() {
 
     $.getJSON(url, null, function(jsonResult) {
 
+        $('#datatable tbody tr').remove();
         for (let i = 0; i < jsonResult.length; i++) {
             // Print the name
             let bday = getJSDateFromSQLDate(jsonResult[i].birthday);
@@ -39,13 +40,14 @@ function updateTable() {
             console.log(bday);
 
             console.log(jsonResult[i].first, jsonResult[i].last, jsonResult[i].email);
-            $('#datatable tbody:last').after('<tr><td>'+ jsonResult[i].id+'<td>'+
+            let html = '<tr><td>'+ jsonResult[i].id+'<td>'+
                 htmlSafe(jsonResult[i].first)+ " " + htmlSafe(jsonResult[i].last)+'<td>'+
                 htmlSafe(jsonResult[i].email) + '<td>' +
                 formatPhoneNumber(htmlSafe(jsonResult[i].phone)) + '<td>' +
-                htmlSafe(bdayString)+'</td></td></td></td></td></tr>');
+                htmlSafe(bdayString)+'</td></td></td></td></td></tr>';
+            $('#datatable tbody').append(html);
         }
-        $('#datatable tbody:first').remove();
+        //$('#datatable tbody:first').remove();
 
 
         console.log("Done");
@@ -184,7 +186,6 @@ function saveChanges(){
             },
             contentType: "application/json",
             dataType: 'text' // Could be JSON or whatever too
-
 
         });
     }
