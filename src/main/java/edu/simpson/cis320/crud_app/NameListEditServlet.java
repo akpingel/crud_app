@@ -10,11 +10,24 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @WebServlet(name = "NameListEditServlet", value = "/api/name_list_edit")
 public class NameListEditServlet extends HttpServlet{
     private final static Logger log = Logger.getLogger(NameListEditServlet.class.getName());
 
+    private Pattern nameValidationPattern;
+    private Pattern emailValidationPattern;
+    private Pattern phoneValidationPattern;
+    private Pattern birthdayValidationPattern;
+
+    public NameListEditServlet(){
+        nameValidationPattern = Pattern.compile("^[A-Za-z-.'\\u00C0-\\u00FF(\\s)]{1,10}$");
+        emailValidationPattern = Pattern.compile("^[a-zA-Z0-9-.]{1,15}@[A-Za-z-.]{1,15}.[A-Za-z]{3}$");
+        phoneValidationPattern = Pattern.compile("^\\(?[1-9][0-9]{2}\\)?-?[0-9]{3}-?[0-9]{4}$");
+        birthdayValidationPattern = Pattern.compile("^[0-9]{4}-[0-9]{2}-[0-9]{2}$");
+    }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -38,6 +51,37 @@ public class NameListEditServlet extends HttpServlet{
 
         Jsonb jsonb = JsonbBuilder.create();
         Person personObject = jsonb.fromJson(requestString, Person.class);
+
+        response.setContentType("application/json");
+
+        // Matcher Object
+        Matcher m = nameValidationPattern.matcher(personObject.getFirst());
+        if (!m.find()) {
+            out.println("{\"error\" : \"Error validating first name.\"}");
+            return;
+        }
+        m = nameValidationPattern.matcher(personObject.getLast());
+        if (!m.find()) {
+            out.println("{\"error\" : \"Error validating last name.\"}");
+            return;
+        }
+        m = emailValidationPattern.matcher(personObject.getEmail());
+        if (!m.find()) {
+            out.println("{\"error\" : \"Error validating email.\"}");
+            return;
+        }
+        m = phoneValidationPattern.matcher(personObject.getPhone());
+        if (!m.find()) {
+            out.println("{\"error\" : \"Error validating phone number.\"}");
+            return;
+        }
+        m = birthdayValidationPattern.matcher(personObject.getBirthday());
+        if (!m.find()) {
+            out.println("{\"error\" : \"Error validating birthday.\"}");
+            return;
+        }
+
+        out.println("{\"success\": \"Successful insert.\"}");
 
         // Log info as a check
         log.log(Level.INFO, "Person test: "+personObject.getBirthday());

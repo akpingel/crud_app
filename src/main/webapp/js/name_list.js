@@ -44,11 +44,16 @@ function updateTable() {
                 htmlSafe(jsonResult[i].first)+ " " + htmlSafe(jsonResult[i].last)+'<td>'+
                 htmlSafe(jsonResult[i].email) + '<td>' +
                 formatPhoneNumber(htmlSafe(jsonResult[i].phone)) + '<td>' +
-                htmlSafe(bdayString)+'</td></td></td></td></td></tr>';
+                htmlSafe(bdayString)+'' +'' +
+                '<td>\n' +
+                '  <button type=\'button\' name=\'delete\' class=\'deleteButton btn btn-danger\' value=\''+jsonResult[i].id+'\'>\n' +
+                '    Delete\n' +
+                '  </button>\n' +
+                '</td></td></td></td></td></td></tr>';
             $('#datatable tbody').append(html);
-        }
-        //$('#datatable tbody:first').remove();
 
+        }
+        $(".deleteButton").on("click", deleteItem);
 
         console.log("Done");
     });
@@ -56,6 +61,12 @@ function updateTable() {
 
 // Call your code.
 updateTable();
+
+// Delete item
+function deleteItem(e) {
+    console.log("Delete");
+    console.log(e.target.value);
+}
 
 // Called when "Add Item" button is clicked
 function showDialogAdd() {
@@ -182,7 +193,12 @@ function saveChanges(){
             data: JSON.stringify(dataToServer),
             success: function(dataFromServer) {
                 console.log(dataFromServer);
-                updateTable();
+                let result = JSON.parse(dataFromServer);
+                if ('error' in result){
+                    alert(result.error);
+                } else {
+                    updateTable();
+                }
             },
             contentType: "application/json",
             dataType: 'text' // Could be JSON or whatever too
@@ -195,3 +211,31 @@ function saveChanges(){
 
 let saveChangesButton = $('#saveChanges');
 saveChangesButton.on("click", saveChanges);
+
+function deleteItem(){
+
+    console.log("Delete person");
+
+    let url = "api/name_list_delete";
+
+    // Create a JSON object with field names and field values
+    let dataToServer = { id : id};
+
+    $.ajax({
+        type: 'POST',
+        url: url,
+        data: JSON.stringify(dataToServer),
+        success: function(dataFromServer) {
+            console.log(dataFromServer);
+            let result = JSON.parse(dataFromServer);
+            if ('error' in result){
+                alert(result.error);
+            } else {
+                updateTable();
+            }
+        },
+        contentType: "application/json",
+        dataType: 'text' // Could be JSON or whatever too
+
+        });
+}
