@@ -275,7 +275,13 @@ $(document).keydown(function(e) {
     if(e.keyCode == 65 && !$('#myModal').is(':visible')){
         showDialogAdd();
     }
+    if(e.keyCode == 13 && $('#myModal').is(':visible')) {
+        saveChanges();
+    }
 });
+
+// If key is an enter key and dialog IS shown, save changes
+
 
 $('#myModal').on('shown.bs.modal', function () {
     $('#firstName').focus();
