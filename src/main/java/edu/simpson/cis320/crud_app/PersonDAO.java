@@ -156,7 +156,7 @@ public class PersonDAO {
             // This is a string that is our SQL query.
             // Update for all our fields
 
-            log.log(Level.INFO, "Get first " + deletePerson.getId());
+            log.log(Level.INFO, "Get id " + deletePerson.getId());
 
             String sql = "delete from person where id = ?";
             stmt = conn.prepareStatement(sql);

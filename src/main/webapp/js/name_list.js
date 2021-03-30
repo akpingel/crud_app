@@ -46,14 +46,19 @@ function updateTable() {
                 formatPhoneNumber(htmlSafe(jsonResult[i].phone)) + '<td>' +
                 htmlSafe(bdayString)+'' +'' +
                 '<td>\n' +
+                '  <button type=\'button\' name=\'edit\' class=\'editButton btn btn-primary\' value=\''+jsonResult[i].id+'\'>\n' +
+                '    Edit\n' +
+                '  </button>\n' + '&nbsp' +
                 '  <button type=\'button\' name=\'delete\' class=\'deleteButton btn btn-danger\' value=\''+jsonResult[i].id+'\'>\n' +
                 '    Delete\n' +
                 '  </button>\n' +
-                '</td></td></td></td></td></td></tr>';
+                '</td></td></td></td></td></tr>';
             $('#datatable tbody').append(html);
 
         }
         $(".deleteButton").on("click", deleteItem);
+        let buttons = $(".editButton");
+        buttons.on("click", editItem);
 
         console.log("Done");
     });
@@ -62,11 +67,6 @@ function updateTable() {
 // Call your code.
 updateTable();
 
-// Delete item
-function deleteItem(e) {
-    console.log("Delete");
-    console.log(e.target.value);
-}
 
 // Called when "Add Item" button is clicked
 function showDialogAdd() {
@@ -97,13 +97,41 @@ function showDialogAdd() {
 
     // Show the hidden dialog
     $('#myModal').modal('show');
+
 }
+
+$('#myModal').on('shown.bs.modal', function () {
+    $('#firstName').focus();
+})
 
 // There's a button in the form with the ID "addItem"
 // Associate the function showDialogAdd with it.
 let addItemButton = $('#addItem');
 addItemButton.on("click", showDialogAdd);
 
+function fieldValidate(field, regex){
+
+    let valid = true;
+
+    // field = $('#field')
+    // field.removeClass("is-invalid");
+    // field.addClass("is-valid");
+    //
+    // return valid;
+
+    if (regex.test(field.val())) {
+        field.removeClass("is-invalid");
+        field.addClass("is-valid");
+        console.log("Valid is " + valid);
+
+    } else {
+        field.removeClass("is-valid");
+        field.addClass("is-invalid");
+        valid = false;
+    }
+    return valid;
+
+}
 function saveChanges(){
 
     console.log("Save changes test!!");
@@ -123,55 +151,40 @@ function saveChanges(){
     console.log("Birthday: " + birthday);
 
     let isValid = true;
-    // Create the regular expression
-    let reg = /^[A-Za-z-.'\u00C0-\u00FF(\s)]{1,10}$/;
+    let success = true;
 
-    if (reg.test(firstName)) {
-        $('#firstName').removeClass("is-invalid");
-        $('#firstName').addClass("is-valid");
-    } else {
-        $('#firstName').removeClass("is-valid");
-        $('#firstName').addClass("is-invalid");
-        isValid = false;
+    //
+    let firstNameField = $('#firstName');
+    isValid = fieldValidate(firstNameField, /^[A-Za-z-.'\u00C0-\u00FF(\s)]{1,10}$/);
+    if (!isValid) {
+        firstNameField.focus();
+        success = false;
     }
 
-    if (reg.test(lastName)) {
-        $('#lastName').removeClass("is-invalid");
-        $('#lastName').addClass("is-valid");
-    } else {
-        $('#lastName').removeClass("is-valid");
-        $('#lastName').addClass("is-invalid");
-        isValid = false;
+    let lastNameField = $('#lastName');
+    isValid = fieldValidate(lastNameField, /^[A-Za-z-.'\u00C0-\u00FF(\s)]{1,10}$/);
+    if (!isValid) {
+        lastNameField.focus();
+        success = false;
     }
 
-    let regEmail = /^[a-zA-Z0-9-.]{1,15}@[A-Za-z-.]{1,15}.[A-Za-z]{3}$/;
-    if (regEmail.test(email)) {
-        $('#email').removeClass("is-invalid");
-        $('#email').addClass("is-valid");
-    } else {
-        $('#email').removeClass("is-valid");
-        $('#email').addClass("is-invalid");
-        isValid = false;
+    let emailField = $('#email');
+    isValid = fieldValidate(emailField, /^[a-zA-Z0-9-.]{1,15}@[A-Za-z-.]{1,15}.[A-Za-z]{3}$/);
+    if (!isValid) {
+        emailField.focus();
+        success = false;
     }
-
-    let regPhone = /^\(?[1-9][0-9]{2}\)?-?[0-9]{3}-?[0-9]{4}$/;
-    if (regPhone.test(phone)) {
-        $('#phone').removeClass("is-invalid");
-        $('#phone').addClass("is-valid");
-    } else {
-        $('#phone').removeClass("is-valid");
-        $('#phone').addClass("is-invalid");
-        isValid = false;
+    let phoneNumberField = $('#phone');
+    isValid = fieldValidate(phoneNumberField, /^\(?[1-9][0-9]{2}\)?-?[0-9]{3}-?[0-9]{4}$/);
+    if (!isValid) {
+        phoneNumberField.focus();
+        success = false;
     }
-
-    let regBirthday = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/;
-    if (regBirthday.test(birthday)) {
-        $('#birthday').removeClass("is-invalid");
-        $('#birthday').addClass("is-valid");
-    } else {
-        $('#birthday').removeClass("is-valid");
-        $('#birthday').addClass("is-invalid");
-        isValid = false;
+    let birthdayField = $('#birthday');
+    isValid = fieldValidate(birthdayField, /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/);
+    if (!isValid) {
+        birthdayField.focus();
+        success = false;
     }
 
     console.log("Valid? " + isValid);
@@ -185,7 +198,7 @@ function saveChanges(){
         phone : phone.replaceAll("-", ""),
         birthday : birthday};
 
-    if (isValid)
+    if (success)
     {
         $.ajax({
             type: 'POST',
@@ -196,8 +209,15 @@ function saveChanges(){
                 let result = JSON.parse(dataFromServer);
                 if ('error' in result){
                     alert(result.error);
+                    $('myToast').html("Error");
+                    $('myToast').toast({delay: 5000});
+                    $('#myToast').toast('show');
                 } else {
+                    $('#myModal').modal('hide');
                     updateTable();
+                    $('myToast').html("Success! Record inserted");
+                    $('myToast').toast({delay: 5000});
+                    $('#myToast').toast('show');
                 }
             },
             contentType: "application/json",
@@ -212,11 +232,15 @@ function saveChanges(){
 let saveChangesButton = $('#saveChanges');
 saveChangesButton.on("click", saveChanges);
 
-function deleteItem(){
+function deleteItem(e){
 
     console.log("Delete person");
 
     let url = "api/name_list_delete";
+
+    let id = e.target.value;
+
+    console.log("id = " + id);
 
     // Create a JSON object with field names and field values
     let dataToServer = { id : id};
@@ -239,3 +263,20 @@ function deleteItem(){
 
         });
 }
+
+function editItem(e) {
+    console.debug("Edit");
+    console.debug("Edit: " + e.target.value);
+}
+
+
+$(document).keydown(function(e) {
+    //console.log(e.keyCode);
+    if(e.keyCode == 65 && !$('#myModal').is(':visible')){
+        showDialogAdd();
+    }
+});
+
+$('#myModal').on('shown.bs.modal', function () {
+    $('#firstName').focus();
+})

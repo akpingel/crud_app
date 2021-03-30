@@ -51,14 +51,14 @@ public class NameListDeleteServlet extends HttpServlet{
 
         // Matcher Object
 
-        out.println("{\"success\": \"Successful insert.\"}");
+        out.println("{\"success\": \"Successful delete.\"}");
 
         // Log info as a check
-        log.log(Level.INFO, "Person test: "+personObject.getId());
+        log.log(Level.INFO, "Person delete id: "+personObject.getId());
 
         // Send something back to the client. Really, we should send a JSON, but
         // we'll keep things simple.
-        out.println("Object test: "+personObject.getId());
+        //out.println("Object test: "+personObject.getId());
 
         PersonDAO.deletePerson(personObject);
     }

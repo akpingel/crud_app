@@ -88,7 +88,7 @@ public class NameListEditServlet extends HttpServlet{
 
         // Send something back to the client. Really, we should send a JSON, but
         // we'll keep things simple.
-        out.println("Object test: "+personObject.getBirthday());
+        //out.println("Object test: "+personObject.getBirthday());
 
         PersonDAO.addPerson(personObject);
     }
