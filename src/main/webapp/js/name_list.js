@@ -57,8 +57,7 @@ function updateTable() {
 
         }
         $(".deleteButton").on("click", deleteItem);
-        let buttons = $(".editButton");
-        buttons.on("click", editItem);
+        $(".editButton").on("click", editItem);
 
         console.log("Done");
     });
@@ -135,6 +134,7 @@ function fieldValidate(field, regex){
 function saveChanges(){
 
     console.log("Save changes test!!");
+    let id = $('#id').val();
     let firstName = $('#firstName').val();
     console.log("First name: " + firstName);
 
@@ -192,11 +192,25 @@ function saveChanges(){
     let url = "api/name_list_edit";
 
     // Create a JSON object with field names and field values
-    let dataToServer = { first : firstName,
-        last : lastName,
-        email : email,
-        phone : phone.replaceAll("-", ""),
-        birthday : birthday};
+    let dataToServer;
+    if (id !== "")
+    {
+        dataToServer = { id : id,
+            first : firstName,
+            last : lastName,
+            email : email,
+            phone : phone.replaceAll("-", ""),
+            birthday : birthday}
+    }
+    else {
+        dataToServer = {
+            first : firstName,
+            last : lastName,
+            email : email,
+            phone : phone.replaceAll("-", ""),
+            birthday : birthday}
+
+    }
 
     if (success)
     {
@@ -232,6 +246,62 @@ function saveChanges(){
 let saveChangesButton = $('#saveChanges');
 saveChangesButton.on("click", saveChanges);
 
+function editItem(e) {
+    console.debug("Edit");
+    console.log("Edit: " + e.target.value);
+    console.debug("Edit: " + e.target.value);
+
+    // Grab the id from the event
+    let id = e.target.value;
+
+// This next line is fun.
+// "e" is the event of the mouse click
+// "e.target" is what the user clicked on. The button in this case.
+// "e.target.parentNode" is the node that holds the button. In this case, the table cell.
+// "e.target.parentNode.parentNode" is the parent of the table cell. In this case, the table row.
+// "e.target.parentNode.parentNode.querySelectorAll("td")" gets an array of all matching table cells in the row
+// "e.target.parentNode.parentNode.querySelectorAll("td")[0]" is the first cell. (You can grab cells 0, 1, 2, etc.)
+// "e.target.parentNode.parentNode.querySelectorAll("td")[0].innerHTML" is content of that cell. Like "Sam" for example.
+// How did I find this long chain? Just by setting a breakpoint and using the interactive shell in my browser.
+    let first = e.target.parentNode.parentNode.querySelectorAll("td")[1].innerHTML.split(' ')[0];
+    let last = e.target.parentNode.parentNode.querySelectorAll("td")[1].innerHTML.split(' ')[1];
+    let email = e.target.parentNode.parentNode.querySelectorAll("td")[2].innerHTML;
+
+    // Regular expression to match phone number pattern:
+    // (515) 555-1212
+    let phone = e.target.parentNode.parentNode.querySelectorAll("td")[3].innerHTML;
+    let regexp = /\((\d{3})\) (\d{3})-(\d{4})/;
+    let match = phone.match(regexp);
+    // Log what we matched
+    console.log("Matches:");
+    console.log(match);
+    // We how have a list, 1-3, where each one is part of the phone number.
+    // Reformat into 515-555-1212
+    let phoneString = match[1]+"-"+match[2]+"-"+match[3];
+
+    let birthday = e.target.parentNode.parentNode.querySelectorAll("td")[4].innerHTML;
+    // Parse date to current time in milliseconds
+    let timestamp = Date.parse(birthday);
+    // Made date object out of that time
+    let dateObject = new Date(timestamp);
+    // Convert to a full ISO formatted string
+    let fullDateString = dateObject.toISOString();
+    // Trim off the time part
+    let shortDateString = fullDateString.split('T')[0];
+
+    $('#id').val(id); // Yes, now we set and use the hidden ID field
+    console.log(id);
+    $('#firstName').val(first);
+    $('#lastName').val(last);
+    $('#email').val(email);
+    $('#phone').val(phoneString);
+    $('#birthday').val(shortDateString);
+
+
+// Show the window
+    $('#myModal').modal('show');
+}
+
 function deleteItem(e){
 
     console.log("Delete person");
@@ -262,11 +332,6 @@ function deleteItem(e){
         dataType: 'text' // Could be JSON or whatever too
 
         });
-}
-
-function editItem(e) {
-    console.debug("Edit");
-    console.debug("Edit: " + e.target.value);
 }
 
 

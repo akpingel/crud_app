@@ -44,7 +44,7 @@ public class NameListEditServlet extends HttpServlet{
         for (String line; (line = in.readLine()) != null; requestString += line);
 
         // Log the string we got as a request, just as a check
-        log.log(Level.INFO, requestString);
+        log.log(Level.INFO, "request string " + requestString);
 
         // Great! Now we want to parse the object, and pop it into our business object. Field
         // names have to match. That's the magic.
@@ -81,15 +81,21 @@ public class NameListEditServlet extends HttpServlet{
             return;
         }
 
-        out.println("{\"success\": \"Successful insert.\"}");
-
         // Log info as a check
-        log.log(Level.INFO, "Person test: "+personObject.getBirthday());
+        log.log(Level.INFO, "Person test: " + personObject.getId());
 
-        // Send something back to the client. Really, we should send a JSON, but
-        // we'll keep things simple.
-        //out.println("Object test: "+personObject.getBirthday());
 
-        PersonDAO.addPerson(personObject);
+        if (personObject.getId() ==  0 )
+        {
+
+            out.println("{\"success\": \"Successful insert.\"}");
+            PersonDAO.addPerson(personObject);
+        }
+        else
+        {
+            out.println("{\"success\": \"Successful edit.\"}");
+            PersonDAO.editPerson(personObject);
+        }
+
     }
 }
