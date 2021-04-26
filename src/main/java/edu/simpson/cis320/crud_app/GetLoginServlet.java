@@ -26,8 +26,9 @@ public class GetLoginServlet extends HttpServlet {
         // At this point, you could grab something out of the session like:
 
         String loginID = (String)session.getAttribute("loginID");
-        out.println(String.format("You are now logged in as '%s'", loginID));
-        //out.print(loginID);
+        //out.print("You are now logged in as ");
+        //out.println(("you are logged in as "+ loginID));
+        out.print(loginID);
 
 
     }

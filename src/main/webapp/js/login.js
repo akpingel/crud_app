@@ -17,8 +17,8 @@ function login() {
         console.log(dataFromServer);
         // Clear the form
         $("#loginID").val("");
+        getLogin();
     });
-    getLogin()
 }
 
 // This gets session info from our back-end servlet.
@@ -30,9 +30,22 @@ function getLogin() {
         console.log("Finished calling servlet.");
         console.log(dataFromServer);
         // Update the HTML with our result
-        $('#getLoginResult').html(dataFromServer)
+        if (dataFromServer === 'null')
+        {
+            console.log("if");
+            $('#logoutHeader').hide();
+            $('#logout').hide();
+            $('#getLoginResult').hide();
+        }
+        else
+        {
+            console.log("else");
+            $('#logoutHeader').show();
+            $('#logout').show();
+            $('#getLoginResult').show();
+            $('#getLoginResult').html("you are logged in as " + dataFromServer);
+        }
     });
-
 }
 
 // This method calls the servlet that invalidates our session
@@ -43,8 +56,8 @@ function logout() {
     $.post(url, null, function (dataFromServer) {
         console.log("Finished calling servlet.");
         console.log(dataFromServer);
+        getLogin();
     });
-    getLogin();
 }
 
 // Hook the functions above to our buttons
@@ -55,6 +68,6 @@ button = $('#loginButton');
 button.on("click", login);
 
 button = $('#logout');
-button.on("click", logout());
+button.on("click", logout);
 
 getLogin();
